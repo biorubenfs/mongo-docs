@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Modelado de Datos y Patrones de Diseño en MongoDB
+# Modelado de Datos y Patrones de Diseño
 
 ## Relacional vs Documental (MongoDB)
 
@@ -71,6 +71,79 @@ El modelo de usuario anterior, podría tener esta apariencia en un modelo docume
 ```
 
 Esto nos permite recuperar todos los datos en una única query sencilla, ya que nos permite almacenar datos en arrays y objetos dentro del usuario.
+
+## Fases de Diseño
+
+Al contrario que en las bases de datos relacionales, donde la normalización es típicamente la primera fase, el modelado de datos en MongoDB tiene las siguientes fases:
+
+- Identificación del workload
+
+- Identificación y modelado de las relaciones entre entidades
+
+- Aplicación de patrones de diseño
+
+La respuesta 
+
+### Identificación del workload
+
+Debemos hacernos dos preguntas:
+
+- ¿Cuáles son las principales entidades almacenadas?
+- ¿Cuáles de estas entidades cambian con el tiempo?
+
+Entender la respuesta a estas preguntas nos ayudará a aplicar la regla de oro del modelado de datos en MongoDB:
+
+> **Regla de Oro del Modelado de Datos en MongoDB**: Los datos que se acceden juntos, se guardan juntos.
+
+### Identificación y modelado de las relaciones entre entidades
+
+Existen 3 tipos de relaciones:
+
+- Relación 1:1 (uno a uno)
+- Relacion 1:n (uno a muchos)
+- Relación n:n (muchos a muchos)
+
+Una vez identificadas las relaciones entre entidades debemos trasladas dichas relaciones al modelo documental de MongoDB. Así, para las entidades relacionadas debemos decidir si referenciar las entidades o incrustar los datos de una en otra.
+
+#### Referenciar o incrustar
+Ejemplo de libros y autores.
+
+A menudo será suficiente con seguir la regla de oro del modelado de datos de MongoDB. Por ejemplo, si los autores siempre se acceden junto con los libros -> incrustar
+
+En general podemos seguir las siguientes directrices:
+
+| Guideline Name   | Question                                                                                          | Embed | Reference |
+|------------------|---------------------------------------------------------------------------------------------------|-------|-----------|
+| Simplicity       | Would keeping the pieces of information together lead to a simpler data model and code?                                 | Yes    | No        |
+| Go Together      | Do the pieces of information have a "has-a," "contains," or similar relationship?                                       | Yes    | No        |
+| Query Atomicity  | Does the application query the pieces of information together?                                                          | Yes    | No        |
+| Update           | Are the pieces of information updated together?                                                                         | Yes    | No        |
+| Archival         | Should the pieces of information be archived at the same time?                                                          | Yes    | No        |
+| Cardinality      | Is there a high cardinality (current or growing) in the child side of the relationship?                                 | No     | Yes       |
+| Data Duplication | Would data duplication be too complicated to manage and undesired?                                                      | No     | Yes       |
+| Document Size    | Would the combined size of the pieces of information take too much memory or transfer bandwidth for the application?    | No     | Yes       |
+| Document Growth  | Would the embedded piece grow without bound?                                                                            | No     | Yes       |
+| Workload         | Are the pieces of information written at different times in a write-heavy workload?                                     | No     | Yes       |
+| Individuality    | For the children side of the relationship, can the pieces exist by themselves without a parent?                         | No     | Yes       |
+
+
+### Aplicación de patrones de diseño
+
+## Patrones de diseño básicos
+
+### Inheritance Pattern
+
+### Computed Pattern
+
+### Approximation Pattern
+
+### Extended Reference Pattern
+
+### Scheme Versioning Pattern
+
+
+## Patrones de diseño avanzados
+
 
 ## Incrustar (Embedding) VS Referenciar (Referencing)
 
