@@ -17,7 +17,7 @@ Cada vez que consultamos una vista, MongoDB ejecuta una consulta con el pipeline
 
 Para crear una vista:
 
-```mongodb
+```js
 db.createView(<nombre_vista>, <colección>, <[pipeline]>)
 ```
 
@@ -35,7 +35,7 @@ Supongamos una colección `books` con el siguiente modelo de datos:
 
 Podemos crear una vista:
 
-```mongodb
+```js
 db.createView(group_editors, books, [
     {$group: {_id: "$editor", total: {$sum: 1}}}
 ])
@@ -43,19 +43,19 @@ db.createView(group_editors, books, [
 
 Esto crea una vista en la que hemos realizado una agrupación para ver el total de libros publicados por cada editorial. Podemos consultar la vista de la siguiente manera:
 
-```mongodb
+```js
 db.group_editors.find({})
 ```
 
 Al ejecutar esta consulta, MongoDB internamente ejecuta el pipeline de agregación definido en la vista, de forma que nos devolverá los datos agrupados por editor. Pero además, podemos establecer condiciones cuando consultamos la vista:
 
-```mongodb
+```js
 db.group_editors.find({year: {$gte: 2004}})
 ```
 
 Existe otra forma de crear vistas:
 
-```mongodb
+```js
 db.createCollection(
   "<viewName>",
   {
@@ -67,7 +67,7 @@ db.createCollection(
 
 Es posible crear vistas sobre otras vistas, simplemente utilizando la vista como si fuera una colección más:
 
-```mongodb
+```js
 db.createView(view_2, view_1, [
     {
         $match: {field: value}
@@ -97,7 +97,7 @@ Las vistas materializadas pueden considerar vistas precomputadas. Una vista mate
 
 Para crear una vista materializada:
 
-```mongodb
+```js
 db.collection.aggregate(
     [
         {$stage1: {}}, 
@@ -114,7 +114,7 @@ El operador `$out` creará la colección indicada o sobreescribirá los datos ex
 
 El operador `$merge` también permite crear la colección si esta no existe, pero además permite la modificación de los documentos existentes. Este operador se utiliza con más frecuencia que `$out`.
 
-```mongodb
+```js
 db.collection.aggregate(
     [
         {$stage1: {}}, 
@@ -131,7 +131,7 @@ db.collection.aggregate(
 
 Según la documentación de MongoDB:
 
-```mongodb
+```js
 db.collection.aggregate(
     [
         { $merge: {
@@ -149,6 +149,6 @@ El operador `$merge` ofrece opciones sobre qué hacer cuando se encuentra ya el 
 
 El gran inconveniente de las vistas materializadas es que no son dinámicas, lo que quiere decir que cuando los datos de la colección subyacentes cambian, los datos de la vista no lo hacen de forma automática, sino que su actualización queda a nuestra merced. Es posible actualizar bajo demanda la vista, diciéndole a MongoDB que documentos tiene que actualizar. Por ejemplo, suponiendo que se inserta un nuevo documento en una colección que es utiliza por la vista, podemos utilizar este documento para excluir todos aquellos que no deseamos actualizar en la vista, de forma que solo se actualice la vista con el nuevo. Si tenemos un campo `createdAt`, podemos actualizar la vista solo con los documentos que tengan una fecha de `createdAt` posterior a la fecha en la que se insertó el nuevo documento:
 
-```mongodb
+```js
 db.mat_view.find({createdAt: {$gt: ISODate(<date>)}})
 ```

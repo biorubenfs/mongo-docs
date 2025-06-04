@@ -15,7 +15,7 @@ Cuando ejecutamos una consulta, esta puede apoyarse en índices o no hacerlo. Si
 
 Es la herramienta básica de que disponemos en Mongo para obtener datos acerca del funcionamiento de los índices:
 
-```mongodb
+```js
 db.books.find({title: "Zinky Boys"}).explain("queryPlanner")    // no ejecuta la query
 {
   explainVersion: '1',
@@ -99,7 +99,7 @@ El orden de ejecución es primero el COLLSCAN y luego el SORT.
 
 Podemos obtener más información haciendo `explain("executionStats")`:
 
-```mongodb
+```js
 db.books.find({title: "Zinky Boys"}).explain("executonStats")    // sí ejecuta la query
 {
   explainVersion: '1',
@@ -196,14 +196,14 @@ Vemos que tenemos más información sobre la ejecución de la query dentro de `e
 ## Índices simples
 Son aquellos índices que utilizan únicamente un campo del documento:
 
-```mongodb
+```js
 db.collection.createIndex({"title": 1})
 ```
 
 MongoDB coge todos los documentos de la colección y saca el campo que hayamos especificado (title). Si la entrada no está presente en el documento, se le asigna un valor null.
 Es posible emplear la notación del punto para crear índices sobre campos en subdocumentos:
 
-```mongodb
+```js
 db.movies.createIndex({"data.subdocument_field": 1})
 ```
 
@@ -218,7 +218,7 @@ Sin embargo, deberíamos evitar crear un documento sobre el campo que es en si u
 ```
 
 Si creamos el índice:
-```mongodb
+```js
 db.collection.createIndex({location: 1})
 ```
 
@@ -228,26 +228,26 @@ db.students.find( { location: { city: "Sacramento", state: "California" } } )
 ```
 
 Pero estas no podrán usarlo:
-```mongodb
+```js
 db.students.find( { "location.city": "Sacramento" } )
 db.students.find( { "location.state": "New York" } )
 ```
 
 Es posible usar índices en campos cuantitativos:
-```mongodb
+```js
 db.listingAndReviews.find({bedrooms: {$gte: 2, $lt: 4}})
 ```
 
 ## Índices compuestos
 Son aquellos que emplean más de una clave. Este tipo de índices son útiles cuando en nuestra query empleamos más de un campo. Por ejemplo:
-```mongodb
+```js
 db.users.createIndex({"age" : 1, "username" : 1})
 ```
 Hace más rápida la ordenación de documentos, de hecho incluso pueden emplearse únicamente con este fin. Sin embargo, hay que tener en cuenta que las claves de ordenación deben figurar en el mismo orden en que aparecen en el índice. Por ejemplo, el indice: `{a: 1, b: 1}` puede emplearse para ordenar por `{a:1, b:1}` y `{a:-1, b:-1}` pero no para `{b:1, a:1}` ni `{b:-1, a:-1}`. La dirección, como has podido ver, sí puede ser la inversa al indice.
 
 Si las claves de la ordenación corresponden a las claves del índice o a un prefijo, MongoDB puede emplear el índice para ordenar los resultados de la consulta. Un prefijo de un índice compuesto es un subconjunto que consiste en una o más claves del inicio de las claves del índice. Por ejemplo:
 
-```mongodb
+```js
 db.data.createIndex( { a:1, b: 1, c: 1, d: 1 } )
 ```
 
@@ -299,7 +299,7 @@ Pero estas no:
 
 Es posible emplear índices para ordenar documentos en nuestras queries. Cualquier query puede ser ordenada luego en base a algún campo:
 
-```mongodb
+```js
 db.people.find({first_name: "James"}).sort({first_name: 1})
 ```
 
@@ -353,7 +353,7 @@ Cuando recuperemos los documentos empleando en nuestra query first_name, los doc
 
 Los índices pueden usarse exclusivamente para ordenar, aunque no exista etapa de filtrado, si tenemos un índice `{name: 1}`:
 
-```mongodb
+```js
 db.listingAndReviews.find({}).sort({name: 1})
 ```
 Podemos verlo en el explain():
