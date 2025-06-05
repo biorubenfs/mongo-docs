@@ -1,16 +1,8 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# Administración de Cluster
-
-## Replica Set vs Cluster
-
-Un replica set es un _conjunto de servidores de MongoDB que trabajan juntos_ para proporcionar alta disponibilidad y tolerancia a fallos. Consiste en varios nodos, donde uno de ellos actúa como nodo primario (primary) y los demás como nodos secundarios (secondary). El nodo primario es responsable de las operaciones de escritura y los nodos secundarios replican los datos del nodo primario y pueden aceptar operaciones de lectura. Si el nodo primario falla, se realiza una elección automática para seleccionar un nuevo nodo primario. Los replica sets se utilizan para garantizar la disponibilidad continua de los datos y la recuperación ante fallos en caso de que uno o más nodos se vuelvan inaccesibles.
-
-Por otro lado, un clúster en MongoDB es un conjunto más amplio de componentes que incluye replica sets, servidores de configuración y servidores de consulta, utilizado para distribuir y escalar horizontalmente los datos en un entorno de base de datos a gran escala.
-
-## Escalado horizontal vs vertical
+# Escalado horizontal vs vertical
 - **Escalado vertical**: Se refiere a aumentar la potencia de procesamiento de un solo servidor o clúster (habitualmente CPU o memoria). Tanto las bases de datos relacionales como las no relacionales pueden escalar verticalmente, pero eventualmente habrá un límite en términos de potencia de procesamiento máxima y rendimiento. Además, hay costos adicionales al escalar hacia hardware de alto rendimiento, ya que los costos no se escalan de manera lineal. Su principal ventaja es que es fácil de llevar a cabo.
 
 - **Escalado horizontal**: Hace referencia a agregar nodos adicionales para compartir la carga. Esto es difícil de lograr con bases de datos relacionales debido a la dificultad de distribuir datos relacionados entre nodos. Con las bases de datos no relacionales, esto se simplifica ya que las colecciones son autosuficientes y no están acopladas de manera relacional. Esto les permite distribuirse entre nodos de manera más sencilla, ya que las consultas no tienen que "unirlas" entre nodos. La escalabilidad horizontal en MongoDB se logra a través del uso de fragmentación (sharding) (preferible) y conjuntos de réplicas (replica sets).
