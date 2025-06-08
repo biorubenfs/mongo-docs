@@ -32,10 +32,27 @@ Existen 3 tipos de relaciones:
 - Relación 1:1 (uno a uno)
 - Relacion 1:n (uno a muchos)
 - Relación n:n (muchos a muchos)
+- Relación 1:m (1 a millones) como caso especial de 1:n
 
 Una vez identificadas las relaciones entre entidades debemos trasladar dichas relaciones al modelo documental de MongoDB. Así, para las entidades relacionadas debemos decidir si referenciar las entidades o incrustar los datos de una en otra.
 
-### Referenciar o incrustar
+### Reglas generales del modelado
+
+Podemos establecer 4 reglas generales a la hora de modelar una base de datos documental:
+
+> #### Regla 1
+> En general deberíamos priorizar incrustar los datos dentro de un documento. Existen razones para no hacerlo como por ejemplo si necesitamos acceder a ellos por sí solos, si son demasiado grandes o si los necesitamos con muy poca frecuencia.
+
+> #### Regla 2
+> La necesidad de acceder a un objeto por sí solo es una razón de peso para no incrustarlo.
+
+> #### Regla 3
+> Evita los joins/lookups si es posible, pero no te preocupes si usarlos puede hacer que tengamos un mejor diseño de esquema.
+
+> #### Regla 4
+> Los arrays no deberían crecer sin límites. Si son más de un par de cientos, no los embebas en el documentos. Si hay más de un par de miles, no uses siquiere referencias para guardar el objectId. Las matrices de alta cardinalidad son una razón de peso para no embeberlas.
+
+### Referenciar vs incrustar (embedding)
 Supongamos que tenemos una colección `books` y otra colección `authors`. Sabemos que todo libro tiene al menos un autor y que todo autor tiene al menos un libro.
 
 Referenciar haría que los autores quedasen dentro un array en un documento books conteniendo únicamente los identificadores de esos autores en otra colección:
@@ -245,7 +262,32 @@ La segunda es mediante la creación de un subdocumento en el que cada review es 
 ```
 
 La ventaja que tiene la incrustación es que evitamos tener datos duplicados. Y suele ser una buena oción cuando el lado n de la relación no puede existir por si misma, como una review, que no puede existir si un libro.
-Para modelar las referencias existen varias opciones. La primera es crear una un array de referencias en el padre. La segunda es tener referenciado el book dentro de la review. De esta forma podemos recuperar todas las referencias para un libro dado con una única query. Finalmente es posible tener bidireccionalidad en la referenciación. En general incrustar el documento entero es la forma preferida de modelar esta relación pero debemos tener en cuenta la cardinalidad de la relación. Si existe la posibilidad de que ese array sea grande, es mejor considerar la opción de que el array solo contenga la referencia. Y si la cardinalidad es enorme, entonces es mejor referenciar desde el hijo al padre.
+
+Para modelar las referencias existen varias opciones. La primera es crear una un array de referencias en el padre. La segunda es tener referenciado el book dentro de la review. De esta forma podemos recuperar todas las referencias para un libro dado con una única query. 
+
+Finalmente es posible tener bidireccionalidad en la referenciación. En general incrustar el documento entero es la forma preferida de modelar esta relación pero debemos tener en cuenta la cardinalidad de la relación. Si existe la posibilidad de que ese array sea grande, es mejor considerar la opción de que el array solo contenga la referencia. Y si la cardinalidad es enorme, entonces es mejor referenciar desde el hijo al padre.
+
+### Relación 1:millions
+Si tenemos el caso de un esquema que pudiera tener millones de subdocumentos. Esto son los unbounded array (array sin limites) y podemos superar fácilmente el tamaño de 16Mb límite de MongoDB, incluso si únicamente almacenamos ObjectId para referenciar.
+Pensemos por ejemplo que deseamos crear una aplicació de registro (logging) de servidores. Cada servidor podría potencialmente guardar una cantidad masiva de datos. En lugar de guardar la relación entre el host y el mensaje de registro en el documento de host, podemos hacer que cada mensaje de registro almacece el host al que está asociado:
+
+*Hosts*:
+```json
+{
+    "_id": ObjectID("AAAB"),
+    "name": "goofy.example.com",
+    "ipaddr": "127.66.66.66"
+}
+```
+
+*Log Message*
+```json
+{
+    "time": ISODate("2014-03-28T09:42:41.382Z"),
+    "message": "cpu is on fire!",
+    "host": ObjectID("AAAB")
+}
+```
 
 ## Aplicación de patrones de diseño
 

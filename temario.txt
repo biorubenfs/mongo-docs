@@ -1,0 +1,49 @@
+Los temas que cubre el examen son los siguientes:
+
+    Philosophy & Features: verifica que comprendemos lo siguiente:
+
+    Las características clave de MongoDB y qué funcionalidad proporcionan.
+    Fundamentos de JSON y BSON.
+    El modelo de datos de MongoDB a un alto nivel.
+    El modelo de consulta de MongoDB a un alto nivel.
+    Coherencia y disponibilidad de datos en MongoDB.
+
+    CRUD:
+
+    Operaciones de creación, lectura, actualización y eliminación (CRUD) en el lenguaje de consulta de MongoDB
+    Tipos de datos son compatibles con MongoDB
+
+    Data Modeling:
+
+    Comprender el modelo de documento.
+    Dados dos modelos de datos alternativos, debes poder determinar cuál será más eficiente.
+    Conocer patrones comunes para el diseño de esquemas.
+    Conocer los beneficios de los tipos de datos especiales en MongoDB.
+    Comprender la diferencia entre incrustar y vincular piezas de información.
+
+    Indexes and Performance:
+
+    Comprender los tipos de índices disponibles en MongoDB.
+    Conocer las propiedades de los índices.
+    Saber cómo mejorar la eficiencia de una consulta utilizando índices.
+    Comprender los costos de rendimiento de escritura de los índices.
+
+    Aggregation:
+
+    La analogía entre el pipeline de agregación y el pipeline de UNIX.
+    Cada operador de etapa de agregación y su semántica.
+    Cómo los documentos ingresan al pipeline, se pasan de una etapa a otra y se devuelven cuando se completa el pipeline.
+
+    Replication:
+
+    Comprender los beneficios de la replicación.
+    Comprender las ventajas y desventajas entre velocidad y durabilidad.
+    Conocer los conceptos básicos de cómo funciona el oplog, incluidos conceptos como idempotencia y replicación basada en declaraciones.
+    Saber qué sucede cuando falla un nodo (primario o no).
+
+    Sharding:
+
+    Comprender el escalado horizontal y cómo el sharding proporciona esta capacidad en MongoDB.
+    Saber cómo construir un buen shard key y qué puede salir mal al seleccionar un shard key.
+    Comprender el rol del balanceador de carga.
+    Saber el rol de los servidores de configuración y cómo funcionan.
