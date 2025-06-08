@@ -58,9 +58,9 @@ Es posible crear vistas sobre otras vistas, simplemente utilizando la vista como
 
 ```js
 db.createView(view_2, view_1, [
-    {
-        $match: {field: value}
-    }
+  {
+    $match: {field: value}
+  }
 ])
 ```
 

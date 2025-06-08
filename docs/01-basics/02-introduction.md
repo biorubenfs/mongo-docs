@@ -13,6 +13,7 @@ No existen esquemas predefinidos. No hay claves o valores con tipos o tamaños f
 ## Características
 
 MongoDB es una base de datos de propósito general. Además de crear, leer, actualizar y borrar datos, permite también:
+
 - **Indexación**: Soporta índices secundarios genéricos (índices primarios son aquellos creados sobre la clave automática `_id`), y ofrece capacidades de indexacion única, compuesta, geospacial y de texto completo. También admite índices secundarios en estructuras jerárquicas, como documentos anidados y arrays.
 - **Agregación**: Framework de agregación para el procesamiento de datos basado en el concepto de pipelines de procesamiento de datos.
 - **Tipos especiales de colecciones e índices**: Proporcionan colecciones de tamaño fijo (`capped`) y colecciones con índices TTL, con datos que se eliminan pasado cierto tiempo. También soporta índices parciales o condicionados.
@@ -50,6 +51,6 @@ La base de datos puede nombrarse con UTF-8 son las siguientes restricciones:
 - Los nombres de las bases de datos son case-insensitive.
 - Los nombres están limitados a un máximo de 64 bytes.
 - Existen algunos nombre de bases de datos que están reservados:
-    - *admin*: para autenticación y autorización. Se necesita acceso a esta base de datos para tareas administrativas.
-    - *local*: almacena datos específicos de un único servidor. En los replica sets, guarda los datos empleados en el proceso de replicación.
-    - *config*: los clusters fragmentados emplean esta base de datos para almacenar la información de cada fragmento.
+  - *admin*: para autenticación y autorización. Se necesita acceso a esta base de datos para tareas administrativas.
+  - *local*: almacena datos específicos de un único servidor. En los replica sets, guarda los datos empleados en el proceso de replicación.
+  - *config*: los clusters fragmentados emplean esta base de datos para almacenar la información de cada fragmento.

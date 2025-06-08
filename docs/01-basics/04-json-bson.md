@@ -78,4 +78,6 @@ MongoDB almacena los datos en formato `BSON` tanto de forma interna como a lo la
 
 El driver de MongoDB para el lenguaje de programación que estemos usando es el encargado de convertir los datos a `BSON` y devolverlos de nuevo cuando realizamos peticiones a la base de datos.
 
-Tipos de datos BSON: https://www.mongodb.com/docs/manual/reference/bson-types/?_ga=2.157655226.1402691322.1664900628-1238349932.1620977965
+
+## Recursos
+- [Tipos de datos BSON](https://www.mongodb.com/docs/manual/reference/bson-types/)

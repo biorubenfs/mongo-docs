@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Relacional vs Documental (MongoDB)
+# Relacional vs Documental
 
 Existe la tentación comprensible de diseñar los esquemas o modelos de MongoDB de la misma manera en que siempre hemos diseñado nuestros esquemas en modelos relacionales SQL. Sin embargo, hacer esto nos impedirá explotar algunas de las características y funcionalidades de MongoDB y del modelo documental.
 
@@ -49,22 +49,21 @@ El modelo de usuario anterior, podría tener esta apariencia en un modelo docume
 
 ```json
 {
-    "first_name": "Paul",
-    "surname": "Miller",
-    "cell": "447557505611",
-    "city": "London",
-    "location": [45.123, 47.232],
-    "professions": ["banking", "finance", "trader"],
-    "cars": [
-        {
-            "model": "Bentley",
-            "year": 1973
-        },
-        {
-            "model": "Rolls Royce",
-            "year": 1965
-        }
-    ]
+  "first_name": "Paul",
+  "surname": "Miller",
+  "cell": "447557505611",
+  "city": "London",
+  "location": [45.123, 47.232],
+  "professions": ["banking", "finance", "trader"],
+  "cars": [
+    {
+        "model": "Bentley",
+        "year": 1973
+    },
+    {
+        "model": "Rolls Royce",
+        "year": 1965
+    }
 }
 ```
 

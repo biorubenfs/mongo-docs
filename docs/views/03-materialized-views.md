@@ -14,12 +14,12 @@ Para crear una vista materializada:
 
 ```js
 db.collection.aggregate(
-    [
-        {$stage1: {}}, 
-        {$stage2: {}}, 
-        ..., 
-        {$out: <new_collection_name>}
-    ]
+  [
+    {$stage1: {}}, 
+    {$stage2: {}}, 
+    ..., 
+    {$out: <new_collection_name>}
+  ]
 )
 ```
 
@@ -31,16 +31,16 @@ El operador `$merge` también permite crear la colección si esta no existe, per
 
 ```js
 db.collection.aggregate(
-    [
-        {$stage1: {}}, 
-        {$stage2: {}}, 
-        ..., 
-        {$merge: {
-            into: <new_collection_name>,
-            whenMatched: <options>
-            whenNotMatched: <options>
-        }}
-    ]
+  [
+    {$stage1: {}}, 
+    {$stage2: {}}, 
+    ..., 
+    {$merge: {
+      into: <new_collection_name>,
+      whenMatched: <options>
+      whenNotMatched: <options>
+    }}
+  ]
 )
 ```
 
@@ -48,15 +48,17 @@ Según la documentación de MongoDB:
 
 ```js
 db.collection.aggregate(
-    [
-        { $merge: {
-            into: <collection> -or- { db: <db>, coll: <collection> },
-            on: <identifier field> -or- [ <identifier field1>, ...],  // Optional
-            let: <variables>,                                         // Optional
-            whenMatched: <replace|keepExisting|merge|fail|pipeline>,  // Optional
-            whenNotMatched: <insert|discard|fail>                     // Optional
-        }}
-    ]
+	[
+    { 
+			$merge: {
+      	into: <collection> -or- { db: <db>, coll: <collection> },
+      	on: <identifier field> -or- [ <identifier field1>, ...],  // Optional
+      	let: <variables>,                                         // Optional
+      	whenMatched: <replace|keepExisting|merge|fail|pipeline>,  // Optional
+      	whenNotMatched: <insert|discard|fail>                     // Optional
+    	}
+		}
+  ]
 )
 ```
 
