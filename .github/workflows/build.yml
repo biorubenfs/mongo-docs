@@ -5,8 +5,8 @@ on:
     branches:
       - main
   push:
-    branches-ignore:
-      - main
+    branches:
+      - all
 
 jobs:
   build:
