@@ -94,6 +94,117 @@ En este caso solo se devolverían documentos con `product_type` igual a `audio_b
 
 ## Computed Pattern
 
+A menudo ciertos datos de utilidad no son almacenados en base de datos. En su lugar se pueden calcular a partir de los datos almacenados. ¿Cuál es el ingreso total por ventas del último Amazon Alexa? ¿Cuántos espectadores vieron la última película taquillera? Este tipo de preguntas pueden responderse a partir de los datos almacenados en una base de datos, pero deben calcularse. Es lo que se conoce como un valor calculado (computed field). Sin embargo este cálculo conlleva cierto a nivel de CPU, especialmente en aquellos en los que el data set es grande, lo que puede conllevar una degradación del rendimiento de la aplicación debido al tiempo que tarda la consulta. Para estos casos disponemos del **computed pattern**.
+
+Si las lecturas son significativamente más comunes que las escrituras, el patrón calculado reduce la frecuencia del cálculo de datos. En lugar de calcular los valores en cada lectura, la aplicación almacena el valor calculado y lo recalcula según sea necesario. La aplicación puede volver a calcular el valor con cada escritura que cambie los datos de origen del valor calculado, o como parte de una tarea periódica.
+
+Con las actualizaciones periódicas, no se garantiza que el valor calculado devuelto sea exacto. Sin embargo, este enfoque puede valer la pena por la mejora en el rendimiento si la precisión exacta no es un requisito (ver Approximation Pattern)
+
+### Ejemplo
+
+Supongamos una aplicación que muestra información sobre películas e ingresos. Los usuarios pueden buscar una película concreta y ver cuánto dinero ha recaudado:
+
+```javascript
+db.screenings.insertMany( [
+   {
+      theater: "Alger Cinema",
+      location: "Lakeview, OR",
+      movie_title: "Lost in the Shadows",
+      movie_id: 1,
+      num_viewers: 344,
+      revenue: 3440
+   },
+   {
+      theater: "City Cinema",
+      location: "New York, NY",
+      movie_title: "Lost in the Shadows",
+      movie_id: 1,
+      num_viewers: 1496,
+      revenue: 22440
+   },
+] )
+```
+
+Si los usuarios desean conocer cuánta gente a visto determinada película y cuánto recaudó, debemos calcular ambos campos a partir de una lectura de los cines que proyectaron dicha película y sumar los valores de dichos campos.
+
+Para evitar que ese cálculo se realice cada vez que se necesita la inforamción, podemos calcular los totales y guardarlos en una colección `movies` 
+
+```javascript
+db.movies.insertOne(
+   {
+      _id: 1,
+      title: "Lost in the Shadows",
+      total_viewers: 1840,
+      total_revenue: 25880
+   }
+)
+```
+
+Cuando añadimos un nuevo visionado:
+
+```javascript
+db.screenings.insertOne(
+   {
+      theater: "Overland Park Cinema",
+      location: "Boise, ID",
+      movie_title: "Lost in the Shadows",
+      movie_id: 1,
+      num_viewers: 760,
+      revenue: 7600
+   }
+)
+```
+
+los campos calculados ya no reflejan la realidad y deberían ser recalculados. La frecuencia de esta operaicón ya depende de la aplicación:
+
+- Si estamos en un entorno de pocas escrituras, la actualización puede hacerse con cada inserción de un nuevo documento en `screenings`. 
+
+- Si existen más escrituras, el cálculo puede hacerse a determinados intervalos (por ejemplo cada hora, o cada x número de documentos nuevos insertados). 
+
+Para actualizar los datos computados que almacenamos, podríamos hacer:
+
+```javascript
+db.screenings.aggregate( [
+   {
+      $group: {
+         _id: "$movie_id",
+         total_viewers: {
+            $sum: "$num_viewers"
+         },
+         total_revenue: {
+            $sum: "$revenue"
+         }
+      }
+   },
+   {
+      $merge: {
+         into: { db: "test", coll: "movies" },
+         on: "_id",
+         whenMatched: "merge"
+      }
+   }
+] )
+```
+
+Ahora cuando hagamos de nuevo:
+
+```javascript
+db.movies.find()
+```
+
+Obtendremos los campos calculados actualizados.
+
+```javascript
+[
+   {
+      _id: 1,
+      title: 'Lost in the Shadows',
+      total_viewers: 2600,
+      total_revenue: 33480
+   }
+]
+```
+
 ## Approximation Pattern
 
 ## Extended Reference Pattern
