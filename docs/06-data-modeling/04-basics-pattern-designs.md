@@ -276,3 +276,55 @@ Además, solo se deben importar y duplicar los datos que sean necesarios. Pensem
 Cuando se actualiza la información, también debemos pensar en cómo gestionarla. ¿Qué referencias ampliadas han cambiado? ¿Cuándo deben actualizarse? Si la información es una dirección de facturación, ¿necesitamos mantener esa dirección con fines históricos o está bien actualizarla? A veces, es mejor duplicar los datos porque así se conservan los valores históricos, lo que puede tener más sentido. La dirección en la que vivía nuestro cliente en el momento en que enviamos los productos tiene más sentido en el documento del pedido que obtener la dirección actual a través de la recopilación de clientes.
 
 ## Scheme Versioning Pattern
+
+
+Dado que las aplicaciones se encuentran en continua evolución es probable que también nuestros modelos de datos cambien, añadiéndose campos, reestructurando información, etc... Esto suele ser más complicado de hacer en bases de datos relacionales que en un sistema con modelos flexibles como es MongoDB.
+
+En MongoDB podemos utilizar el patrón de control de versiones del esquema para facilitar los cambios.
+
+Como se ha mencionado, actualizar el esquema de una base de datos tabular puede ser complicado. Por lo general, es necesario detener la aplicación, migrar la base de datos para que sea compatible con el nuevo esquema y, a continuación, reiniciarla. Este tiempo de inactividad puede dar lugar a una mala experiencia del cliente. Además, ¿qué ocurre si la migración no se ha realizado con éxito? Volver al estado anterior suele ser un reto aún mayor.
+
+El patrón Schema Versioning aprovecha la compatibilidad de MongoDB con documentos de diferentes formas que pueden coexistir en la misma colección de la base de datos. Este aspecto polimórfico de MongoDB es muy potente. Permite que documentos con campos diferentes o incluso con tipos de campos diferentes para el mismo campo coexistan sin problemas.
+
+Para implementar este patrón basta con añadir una clave que determine qué versión de modelo se está usando, algo como un campo `schema_version`. Así, cuando nuestra aplicación reciba esta campo sabrá como gestionar la entidad.
+
+Supongamos un modelo de datos `users` que en un principio fue así:
+
+```
+{
+   "_id": "<ObjectId>",
+   "name": "Anakin Skywalker",
+   "home": "503-555-0000",
+   "work": "503-555-0010"
+}
+```
+
+Pero con el paso de los años se comenzó a necesitar un campo adicional para el número de teléfono móvil:
+
+```
+{
+   "_id": "<ObjectId>",
+   "name": "Darth Vader",
+   "home": "503-555-0100",
+   "work": "503-555-0110",
+   "mobile": "503-555-0120"
+}
+```
+
+Este cambio es relativamente y apenas afecta al modelo de datos, ya que simplemente es un campo que puede estar presente o ausente. Pero con el paso del tiempo, se generan nuevas formas de contacto, que han de ser tenidas en cuenta. Así, podemos llegar al siguiente modelo:
+
+```
+{
+   "_id": "<ObjectId>",
+   "schema_version": "2",
+   "name": "Anakin Skywalker (Retired)",
+   "contact_method": [
+       { "work": "503-555-0210" },
+       { "mobile": "503-555-0220" },
+       { "twitter": "@anakinskywalker" },
+       { "skype": "AlwaysWithYou" }
+   ]
+}
+```
+
+La flexibilidad del modelo de documentos de MongoDB permite que todo esto ocurra sin tiempo de inactividad de la base de datos. Desde el punto de vista de la aplicación, se puede diseñar para leer ambas versiones del esquema. Este cambio en la aplicación en cuanto a cómo gestionar la diferencia de esquemas tampoco debería requerir tiempo de inactividad, suponiendo que haya más de un servidor de aplicaciones involucrado.
