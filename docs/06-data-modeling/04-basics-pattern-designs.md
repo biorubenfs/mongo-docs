@@ -207,6 +207,20 @@ Obtendremos los campos calculados actualizados.
 
 ## Approximation Pattern
 
+Este patrón no deja de ser una extensión del `computed pattern`. 
+
+**Computed Pattern**: Calcula y almacena valores derivados de otros datos, actualizándolos cada vez que los datos subyacentes cambian. Así, los valores computados siempre reflejan el estado actual y son precisos.
+
+**Approximation Pattern**: También almacena valores calculados, pero no los actualiza en cada modificación de los datos base. En su lugar, los recalcula periódicamente (por ejemplo, cada cierto número de inserciones o cada intervalo de tiempo). Esto significa que los valores pueden estar desactualizados temporalmente, pero se gana en rendimiento y escalabilidad, especialmente cuando las escrituras son frecuentes.
+
+### Ejemplo
+
+En una aplicación en el que los usuarios realizan una reseña de un determinado libro, con cada nueva reseña, la media del libro cambia, pero no siempre lo hace de forma significativa. Podríamos incrementar el recuento de revisión y volver a calculad el número:
+
+`(avgRating * reviewCount + newRating) / (reviewCount + 1)`
+
+Esta visión es más precisa pero incrementa mucho el número de escrituras. Cuando hay solo unas pocas reseñas para un libro, ese costo adicional es asumible y necesario, ya que queremos que el dato sea preciso, pero cuando un libro tiene ya miles de reseñas una nueva reseña apenas modifica el valor previo. Entonces a partir de cierto número de reseñas, podríamos optar por recalcular la media periódicamente en vez de bajo demanda. Esto reduce drásticamente las operaciones de escritura a cambio de una pérdida de precisión en el campo calculado. Una forma de implementar esto es mediante la introducción de un número aleatorio en cada nueva revisión. Solo realizaremos el cálculo del campo computado cuando este valor sea 10. Entonces hay que hacer una modificación en como calculamos el `avgRating`. En lugar de incrementar el valor `reviewCount` en 1, lo haremos en 10 y la `newRating` también habría que multiplicarla por 10. Esto asume que las últimas 10 reseñas han tenido ese mismo valor de newRating (sería el equivalente a decir que ha habido 10 reseñas idénticas). Es estadísticamente correcto. Sacrifica algo de precisión, pero a cambio obtenemos un 90% menos de escrituras en nuestra coleccion.
+
 ## Extended Reference Pattern
 
 ## Scheme Versioning Pattern
