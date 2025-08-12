@@ -220,4 +220,59 @@ Esta visión es más precisa pero incrementa mucho el número de escrituras. Cua
 
 ## Extended Reference Pattern
 
+Hay ocasiones en las que tiene sentido tener colecciones separadas para los datos. Si una entidad puede considerarse como una «cosa» independiente, a menudo tiene sentido tener una colección separada. Por ejemplo, en una aplicación de comercio electrónico, existe la idea de un `order`, al igual que la de un `customer` y la de un `inventory`. Son entidades lógicas independientes.
+
+Sin embargo, desde el punto de vista del rendimiento, esto se convierte en un problema, ya que necesitamos reunir los datos para un pedido específico. Un cliente puede tener N pedidos, lo que crea una relación 1-N. Desde el punto de vista del pedido, si le damos la vuelta, tienen una relación N-1 con un cliente. Incorporar toda la información sobre un cliente para cada pedido solo para reducir la operación JOIN da como resultado una gran cantidad de información duplicada. Además, es posible que no toda la información del cliente sea necesaria para un pedido.
+
+El patrón de referencia ampliada ofrece una forma excelente de gestionar estas situaciones. En lugar de duplicar toda la información sobre el cliente, solo copiamos los campos a los que accedemos con frecuencia. En lugar de incorporar toda la información o incluir una referencia para unir la información, solo incorporamos los campos de mayor prioridad y a los que se accede con más frecuencia, como el nombre y la dirección.
+
+Colección `customers`:
+
+```json
+{
+   _id: "123",
+   name: "Katrina Pope",
+   street: ""123 Main St",
+   city: "Somewhere",
+   country: "Someplace",
+   date_of_birth: ISODate(),
+   social_handles: [
+      twitter: "@somethingamazing123"
+   ],
+   ...
+}
+```
+
+Colección `orders`:
+
+```json
+{
+   _id: ObjectId(""),
+   data: ISODate(),
+   customer_id: 123,
+   shipping_address: {
+      name: "Katrina Pope",
+      street: ""123 Main St",
+      city: "Somewhere",
+      country: "Someplace",
+   },
+   order: [
+      {
+         product: "widget",
+         qty: 5,
+         cost: {
+            value: NumberDecimal("11.99")
+            currency: "USD",
+         }
+      }
+   ]
+}
+```
+
+Algo que hay que tener en cuenta al utilizar este patrón es que los datos se duplican. Por lo tanto, funciona mejor si los datos que se almacenan en el documento principal son campos que no cambian con frecuencia. Algo como un user_id y el nombre de una persona son buenas opciones. Esos datos rara vez cambian.
+
+Además, solo se deben importar y duplicar los datos que sean necesarios. Pensemos en una factura de pedido. Si importamos el nombre del cliente en una factura, ¿necesitamos su segundo número de teléfono y su dirección de entrega en ese momento? Probablemente no, por lo que podemos dejar esos datos fuera de la colección de facturas y hacer referencia a una colección de clientes.
+
+Cuando se actualiza la información, también debemos pensar en cómo gestionarla. ¿Qué referencias ampliadas han cambiado? ¿Cuándo deben actualizarse? Si la información es una dirección de facturación, ¿necesitamos mantener esa dirección con fines históricos o está bien actualizarla? A veces, es mejor duplicar los datos porque así se conservan los valores históricos, lo que puede tener más sentido. La dirección en la que vivía nuestro cliente en el momento en que enviamos los productos tiene más sentido en el documento del pedido que obtener la dirección actual a través de la recopilación de clientes.
+
 ## Scheme Versioning Pattern
