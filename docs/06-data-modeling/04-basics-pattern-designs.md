@@ -226,6 +226,8 @@ Sin embargo, desde el punto de vista del rendimiento, esto se convierte en un pr
 
 El patrón de referencia ampliada ofrece una forma excelente de gestionar estas situaciones. En lugar de duplicar toda la información sobre el cliente, solo copiamos los campos a los que accedemos con frecuencia. En lugar de incorporar toda la información o incluir una referencia para unir la información, solo incorporamos los campos de mayor prioridad y a los que se accede con más frecuencia, como el nombre y la dirección.
 
+### Ejemplo
+
 Colección `customers`:
 
 ```json
@@ -252,7 +254,7 @@ Colección `orders`:
    customer_id: 123,
    shipping_address: {
       name: "Katrina Pope",
-      street: ""123 Main St",
+      street: "123 Main St",
       city: "Somewhere",
       country: "Someplace",
    },
@@ -277,7 +279,6 @@ Cuando se actualiza la información, también debemos pensar en cómo gestionarl
 
 ## Scheme Versioning Pattern
 
-
 Dado que las aplicaciones se encuentran en continua evolución es probable que también nuestros modelos de datos cambien, añadiéndose campos, reestructurando información, etc... Esto suele ser más complicado de hacer en bases de datos relacionales que en un sistema con modelos flexibles como es MongoDB.
 
 En MongoDB podemos utilizar el patrón de control de versiones del esquema para facilitar los cambios.
@@ -287,6 +288,8 @@ Como se ha mencionado, actualizar el esquema de una base de datos tabular puede 
 El patrón Schema Versioning aprovecha la compatibilidad de MongoDB con documentos de diferentes formas que pueden coexistir en la misma colección de la base de datos. Este aspecto polimórfico de MongoDB es muy potente. Permite que documentos con campos diferentes o incluso con tipos de campos diferentes para el mismo campo coexistan sin problemas.
 
 Para implementar este patrón basta con añadir una clave que determine qué versión de modelo se está usando, algo como un campo `schema_version`. Así, cuando nuestra aplicación reciba esta campo sabrá como gestionar la entidad.
+
+### Ejemplo
 
 Supongamos un modelo de datos `users` que en un principio fue así:
 
