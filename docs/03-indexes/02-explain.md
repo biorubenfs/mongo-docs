@@ -71,7 +71,7 @@ db.books.find({title: "Zinky Boys"}).explain("queryPlanner")    // no ejecuta la
 
 En lo que debemos fijarnos de este resultado es en el `winningPlan`. Cuando haces una consulta con `.explain()`, MongoDB analiza cómo va a ejecutar esa consulta. Si hay varias formas posibles de ejecutarla (por ejemplo, usar un índice A, un índice B, o escanear toda la colección), MongoDB elige la más eficiente. Esa estrategia ganadora es lo que aparece en `winningPlan`. En este caso vemos que tendrá que hacer un COLLSCAN, ya que no hay ningún índice en que pueda apoyarse mongodb para ejecutar la consulta. Es importante señalar que la estructura de datos devuelta en el `winningPlan` (en árbol) se lee de abajo hacia arriba. Por ejemplo:
 
-```
+```js
 winningPlan: {
   stage: 'SORT',
   sortPattern: {
@@ -178,4 +178,5 @@ db.books.find({title: "Zinky Boys"}).explain("executonStats")    // sí ejecuta 
   operationTime: Timestamp({ t: 1745446738, i: 1 })
 }
 ```
-Vemos que tenemos más información sobre la ejecución de la query dentro de `executionStats`. Lo importante de esta sección es el ratio totalDocsExamined vs nReturned. En este caso podemos ver que Mongo ha tenido que escanear toda la colección, de 105 documentos para recuperar únicamente uno. Las queries más optimizadas son aquellas en las que el total de documentos examinados *totalDocsExamined* y el *nReturned* se acercan al mismo número. No siempre es posible, así que deberíamos priorizar que esos números sean similares en aquellas queries que usamos más frecuentemente.
+
+Vemos que tenemos más información sobre la ejecución de la query dentro de `executionStats`. Lo importante de esta sección es el ratio `totalDocsExamined` vs `nReturned`. En este caso podemos ver que Mongo ha tenido que escanear toda la colección, de 105 documentos para recuperar únicamente uno. Las queries más optimizadas son aquellas en las que el total de documentos examinados *totalDocsExamined* y el *nReturned* se acercan al mismo número. No siempre es posible, así que deberíamos priorizar que esos números sean similares en aquellas queries que usamos más frecuentemente.
